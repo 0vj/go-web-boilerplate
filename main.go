@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -9,13 +11,29 @@ import (
 	"go-web-boilerplate/config"
 
 	"github.com/gorilla/handlers"
+	_ "github.com/lib/pq"
 )
+
+var db *sql.DB
 
 func index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello, World!"))
 }
 
 func main() {
+	conn, _ := sql.Open("postgres", fmt.Sprintf("user=%s password=%s dbname=%s sslmode=%s",
+		config.Cfg.DBUsername,
+		config.Cfg.DBPassword,
+		config.Cfg.DBName,
+		config.Cfg.DBSSLMode,
+	))
+	db = conn
+	defer conn.Close()
+
+	if err := conn.Ping(); err != nil {
+		panic(err)
+	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", index)
 
