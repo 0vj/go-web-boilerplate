@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"go-web-boilerplate/config"
+
 	"github.com/gorilla/handlers"
 )
 
@@ -22,7 +24,7 @@ func main() {
 
 	logged := handlers.LoggingHandler(outs, mux)
 	server := &http.Server{
-		Addr:         "127.0.0.1:5000",
+		Addr:         config.Cfg.HTTPAddr,
 		Handler:      logged,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
