@@ -1,20 +1,25 @@
 package config
 
-import "github.com/ilyakaznacheev/cleanenv"
+import (
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
+)
 
 type Config struct {
-	DBUsername string `env:"DATABASE_USERNAME" env-default:"root"`
-	DBHost     string `env:"DATABASE_HOST_NAME" env-default:"localhost"`
-	DBPassword string `env:"DATABASE_PASSWORD" env-default:"root"`
-	DBName     string `env:"DATABASE_NAME" env-default:"test"`
-	DBSSLMode  string `env:"DATABASE_SSL_MODE" env-default:"disable"`
-	HTTPAddr   string `env:"HTTP_PORT" env-default:"127.0.0.1:5000"`
+	DBUsername string `envconfig:"DATABASE_USERNAME" default:"root"`
+	DBHost     string `envconfig:"DATABASE_HOST" default:"localhost"`
+	DBPassword string `envconfig:"DATABAE_PASSWORD" default:"root"`
+	DBName     string `envconfig:"DATABASE_NAME" default:"schotori"`
+	DBSSLMode  string `envconfig:"DATABSE_SSLMODE" default:"disable"`
+	HTTPAddr   string `envconfig:"HTTP_PORT" default:"127.0.0.1:5000"`
 }
 
 var Cfg Config
 
 func init() {
-	if err := cleanenv.ReadEnv(&Cfg); err != nil {
+	godotenv.Load()
+	err := envconfig.Process("", &Cfg)
+	if err != nil {
 		panic(err)
 	}
 }
